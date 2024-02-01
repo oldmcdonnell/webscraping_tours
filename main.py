@@ -1,6 +1,6 @@
 import requests
 import selectorlib
-
+from send_email import send_email
 
 URL = "https://programmer100.pythonanywhere.com/tours/"
 HEADERS = {
@@ -16,7 +16,20 @@ def extract(source):
     value = extractor.extract(source)["tours"]
     return value
 
+def store(extracted):
+    with open("data.txt", "a") as file:
+        file.write(extracted + "\n")
+
+def read(extracted):
+    with open("data.txt", 'a') as file:
+        file.write(extracted + "\n")
+
 if __name__ == "__main__":
     scraped = scrape(URL)
     extracted = extract(scraped)
     print(extracted)
+    content = read(extracted)
+    if extracted != "No upcoming tours":
+        if extracted not in content:
+            store(extracted)
+            send_email(message="Hey,a new event was booked")
